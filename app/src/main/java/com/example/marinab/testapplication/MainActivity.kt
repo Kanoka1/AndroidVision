@@ -50,7 +50,6 @@ class MainActivity : AppCompatActivity() {
 
         button.setOnClickListener {
             val textView: TextView = findViewById(R.id.textView)
-            textView.text = "alpjasjdkasndknaskdnkasndkasndkjnaskjdnaskjdnkasjndkas"
             val callCameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             if (callCameraIntent.resolveActivity(packageManager) != null){
                 // Create the File where the photo should go
@@ -98,17 +97,13 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         var httpRequest = HttpRequest()
         super.onActivityResult(requestCode, resultCode, data)
-
+        val textView: TextView = findViewById(R.id.textView)
         when (requestCode){
             REQUEST_TAKE_PHOTO -> {
                 if (resultCode == Activity.RESULT_OK ) { //&& data != null
-
                     val imgFile = File(mCurrentPhotoPath)
                     Thread({
-                        httpRequest.pushPostRquest2(imgFile)}).start()
-
-
-
+                        httpRequest.pushPostRquest2(imgFile, textView)}).start()
 
                 }
             }

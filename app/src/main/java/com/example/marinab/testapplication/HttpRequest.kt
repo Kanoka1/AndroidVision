@@ -2,6 +2,8 @@ package com.example.marinab.testapplication
 
 import android.os.Build
 import android.support.annotation.RequiresApi
+import android.util.Log
+import android.widget.TextView
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -14,7 +16,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.TimeUnit
 import okhttp3.OkHttpClient
-
+import retrofit2.converter.gson.GsonConverterFactory
 
 
 class HttpRequest {
@@ -80,46 +82,45 @@ class HttpRequest {
 
     }
 
-    fun pushPostRquest2(file: File) {
-
-
-        val serverUrl: String = "http://192.168.222.45:1231"
+    fun pushPostRquest2(file: File, textView : TextView){
+        //val serverUrl: String = "http://192.168.222.45:1231"
+        val serverUrl: String = "http://192.168.222.85:8765"
         val okHttpClient = OkHttpClient.Builder()
                 .connectTimeout(2000, TimeUnit.SECONDS)
                 .writeTimeout(2000, TimeUnit.SECONDS)
                 .readTimeout(3000, TimeUnit.SECONDS)
                 .build()
 
+
         val retrofit = Retrofit.Builder()
                 .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(serverUrl)
                 .build()
 
         val service = retrofit.create(RetrofitInterface::class.java)
 
-                //val ss =  service.uploadUserAvatar(image,"asdf")
+        //val ss =  service.uploadUserAvatar(image,"asdf")
 
         val reqFile = RequestBody.create(MediaType.parse("image/*"), file)
         val body = MultipartBody.Part.createFormData("upload", file.getName(), reqFile)
         val name = RequestBody.create(MediaType.parse("text/plain"), "upload_test")
 
         val req = service.uploadUserAvatar(body, name)
-        req.enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
-
+        req.enqueue(object : Callback<ImageModel> {
+            override fun onResponse(call: Call<ImageModel>?, response: Response<ImageModel>?) {
                 if (response != null && response.isSuccessful) {
-
+                    val  a : Int = 1
+                    val result = response.body()
+                    textView.text = result!!.FirstName + " " + result!!.SecondName + " " + result!!.City
                 } else {
-
+                    val  a : Int = 2
                 }
-
-
             }
-
-            override fun onFailure(call: Call<Void>?, t: Throwable?) {
-
+            override fun onFailure(call: Call<ImageModel>?, t: Throwable?) {
+                Log.d("AAAA", "1234567")
+                val  a : Int = 3
             }
         })
-
-           }
+    }
 }
